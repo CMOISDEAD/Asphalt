@@ -1,40 +1,55 @@
+import { useEffect, useState } from 'react';
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-import icon from '../../assets/icon.svg';
+import styled from 'styled-components';
 import './App.css';
 
+// Components
+import { Navbar } from './components/Navbar';
+import { Sidebar } from './components/Sidebar';
+import { FileTree } from './components/FileTree';
+//import { CodeMirror } from './components/CodeMirror';
+import { Monaco } from './components/Monaco';
+import { Preview } from './components/Preview';
+import { Footer } from './components/Footer';
+
+const Container = styled.div`
+  display: flex;
+`;
+
 const Hello = () => {
+  const [doc, setDoc] = useState('');
+  const [appState, setAppState] = useState({
+    path: '',
+    extention: '',
+    data: '',
+  });
+  const [config, setConfig] = useState({
+    show: 'none',
+  });
+  const [fileTree, setFileTree] = useState({
+    show: 'none',
+  });
+
+  useEffect(() => {}, [appState]);
+
   return (
     <div>
-      <div className="Hello">
-        <img width="200px" alt="icon" src={icon} />
-      </div>
-      <h1>electron-react-boilerplate</h1>
-      <div className="Hello">
-        <a
-          href="https://electron-react-boilerplate.js.org/"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="books">
-              📚
-            </span>
-            Read our docs
-          </button>
-        </a>
-        <a
-          href="https://github.com/sponsors/electron-react-boilerplate"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="books">
-              🙏
-            </span>
-            Donate
-          </button>
-        </a>
-      </div>
+      <Navbar callback={setAppState} />
+      <Container>
+        <Sidebar
+          callback={setAppState}
+          fileContent={{ path: appState.path, value: doc }}
+          setPreview={setConfig}
+          setFileView={setFileTree}
+        />
+        <FileTree data={fileTree} />
+        <Monaco content={appState.data} refreshPreview={setDoc} />
+        <Preview content={doc} preferences={config} />
+      </Container>
+      <Footer
+        title={appState.path ? appState.path : 'No file'}
+        lang={'markdown'}
+      />
     </div>
   );
 };
@@ -48,3 +63,10 @@ export default function App() {
     </Router>
   );
 }
+
+// <CodeMirror
+//   extensions={[vim()]}
+//   state={appState.data}
+//   updateData={refreshContent}
+//   className="pe-1"
+//   />

@@ -9,11 +9,20 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  shell,
+  ipcMain,
+  Menu,
+  Tray,
+  dialog,
+} from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import fs from 'fs';
 
 export default class AppUpdater {
   constructor() {
@@ -25,10 +34,46 @@ export default class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
+// HACK: this function need a refactor.
+async function handleFileOpen() {
+  const { canceled, filePaths } = await dialog.showOpenDialog({
+    properties: ['openFile'],
+  });
+  if (canceled) {
+    return;
+  } else {
+    let data = fs.readFileSync(filePaths[0], 'utf8');
+    fs.readFile(filePaths[0], { encoding: 'utf-8' }, function (err, data) {
+      if (err) console.log(err);
+    });
+    return { path: filePaths[0], data, extention: path.extname(filePaths[0]) };
+  }
+}
+
+function handleWriteFile(data) {
+  let { path, value } = data;
+  fs.writeFile(path, value, function (err) {
+    if (err) {
+      return console.log(err);
+    }
+  });
+  console.log('file saved.');
+}
+
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
   console.log(msgTemplate(arg));
   event.reply('ipc-example', msgTemplate('pong'));
+});
+
+ipcMain.on('close-app', () => {
+  if (mainWindow != null) {
+    mainWindow.hide();
+  }
+});
+
+ipcMain.on('save-file', (event, data) => {
+  handleWriteFile(data);
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -56,14 +101,14 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
+const RESOURCES_PATH = app.isPackaged
+  ? path.join(process.resourcesPath, 'assets')
+  : path.join(__dirname, '../../assets');
+
 const createWindow = async () => {
   if (isDebug) {
     await installExtensions();
   }
-
-  const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath, 'assets')
-    : path.join(__dirname, '../../assets');
 
   const getAssetPath = (...paths: string[]): string => {
     return path.join(RESOURCES_PATH, ...paths);
@@ -73,6 +118,7 @@ const createWindow = async () => {
     show: false,
     width: 1024,
     height: 728,
+    frame: false,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: app.isPackaged
@@ -124,9 +170,33 @@ app.on('window-all-closed', () => {
   }
 });
 
+let tray = null;
+
 app
   .whenReady()
   .then(() => {
+    ipcMain.handle('dialog:openFile', handleFileOpen);
+    tray = new Tray(path.join(RESOURCES_PATH, 'icon.png'));
+    const contextMenu = Menu.buildFromTemplate([
+      {
+        label: 'Show',
+        click: () => {
+          if (mainWindow != null) {
+            mainWindow.show();
+          }
+        },
+      },
+      {
+        label: 'Close',
+        click: () => {
+          app.quit();
+        },
+      },
+      { label: 'Options', type: 'normal' },
+    ]);
+    tray.setToolTip('Asphalt');
+    tray.setContextMenu(contextMenu);
+
     createWindow();
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the

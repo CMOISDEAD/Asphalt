@@ -17,5 +17,8 @@ contextBridge.exposeInMainWorld('electron', {
     once(channel: Channels, func: (...args: unknown[]) => void) {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
     },
+    closeApp: () => ipcRenderer.send('close-app'),
+    saveFile: (data) => ipcRenderer.send('save-file', data),
+    openFile: () => ipcRenderer.invoke('dialog:openFile'),
   },
 });
