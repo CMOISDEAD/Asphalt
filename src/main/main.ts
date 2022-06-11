@@ -46,7 +46,7 @@ async function handleFileOpen() {
     fs.readFile(filePaths[0], { encoding: 'utf-8' }, function (err, data) {
       if (err) console.log(err);
     });
-    return { path: filePaths[0], data, extention: path.extname(filePaths[0]) };
+    return { path: filePaths[0], fileName: path.basename(filePaths[0]), data, extention: path.extname(filePaths[0]) };
   }
 }
 

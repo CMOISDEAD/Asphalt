@@ -23,7 +23,7 @@ export const Tabbar = ({ tabs }: Props) => {
   return (
     <Box>
       {tabs.map((tab: Tab) => {
-        return <TabItem title={tab.title} />;
+        return <TabItem title={tab.title} active={tab.active} />;
       })}
     </Box>
   );

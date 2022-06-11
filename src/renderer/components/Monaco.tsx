@@ -7,26 +7,25 @@ import { Tabbar } from './Tabbar';
 import { markdown } from '@codemirror/lang-markdown';
 import { vim } from '@replit/codemirror-vim';
 
-const tabs = [
-  {
-    title: 'Main.md',
-  },
-  {
-    title: 'Work.md',
-  },
-  {
-    title: 'Notes.md',
-  },
-];
-
 const Box = styled.div`
-  width: 96.9vw !important;
+  width: 97vw !important;
   min-width: 50vw;
-  max-width: 96.9vw;
+  max-width: 97vw;
 `;
 
-export const Monaco = ({ content, refreshPreview }) => {
+export const Monaco = ({ content, refreshPreview, tabName }) => {
   const [value, setValue] = useState(content);
+
+  const tabs = [
+    {
+      title: tabName ? tabName : 'no files...',
+      active: true,
+    },
+    {
+      title: 'Doom.md',
+      active: false,
+    },
+  ];
 
   useEffect(() => {
     setValue(content);
@@ -37,7 +36,8 @@ export const Monaco = ({ content, refreshPreview }) => {
       <Tabbar tabs={tabs} />
       <CodeMirror
         value={value}
-        height="91vh"
+        height="91.3vh"
+        autoFocus="true"
         extensions={[markdown(), vim()]}
         onChange={(value, viewUpdate) => {
           refreshPreview(value);

@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import {
   VscFile,
   VscSearch,
-  VscDebugAll,
+  VscSave,
   VscOpenPreview,
 } from 'react-icons/vsc';
 import { useState } from 'react';
@@ -41,7 +41,7 @@ export const Sidebar = ({
   const handleFile = async (e: React.ChangeEvent<any>) => {
     e.preventDefault;
     const filePath: fileData = await window.electron.ipcRenderer.openFile(); // FIX: Type 'string' is not assignable to type 'fileData'.
-    callback(filePath);
+    if (filePath) callback(filePath);
   };
 
   const handleSave = (e: React.ChangeEvent<any>) => {
@@ -71,7 +71,7 @@ export const Sidebar = ({
           <VscSearch onClick={handleFile} />
         </li>
         <li>
-          <VscDebugAll onClick={handleSave} />
+          <VscSave onClick={handleSave} />
         </li>
         <li>
           <VscOpenPreview onClick={handlePreview} />

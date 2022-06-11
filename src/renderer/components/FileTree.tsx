@@ -28,8 +28,13 @@ const Container = styled.div`
   }
 `;
 
-export const FileTree = ({ data }) => {
+export const FileTree = ({ data, fileInfo }) => {
   const [fileTreeConfig, setFileTreeConfig] = useState({ show: false });
+  const [fileHistory, setFileHistory] = useState([
+    {
+      name: 'main.md',
+    },
+  ]);
 
   useEffect(() => {
     setFileTreeConfig(data);
@@ -39,18 +44,14 @@ export const FileTree = ({ data }) => {
     <Container show={fileTreeConfig.show}>
       <ul>
         <p className="fw-bold fs-6 p-1 text-center">Local</p>
-        <li className="active">
-          <VscMarkdown className="file" />
-          Notes.md
-        </li>
-        <li>
-          <VscMarkdown className="file" />
-          Home.md
-        </li>
-        <li>
-          <VscMarkdown className="file" />
-          Work.md
-        </li>
+        {fileHistory.map((file) => {
+          return (
+            <li className="active">
+              <VscMarkdown className="file" />
+              {file.name}
+            </li>
+          );
+        })}
       </ul>
       <p className="fw-bold fs-6 p-1 text-center">Server</p>
       <p className="text-center small fst-italic">

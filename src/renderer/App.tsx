@@ -20,6 +20,7 @@ const Hello = () => {
   const [doc, setDoc] = useState('');
   const [appState, setAppState] = useState({
     path: '',
+    fileName: '',
     extention: '',
     data: '',
   });
@@ -43,7 +44,11 @@ const Hello = () => {
           setFileView={setFileTree}
         />
         <FileTree data={fileTree} />
-        <Monaco content={appState.data} refreshPreview={setDoc} />
+        <Monaco
+          content={appState.data}
+          refreshPreview={setDoc}
+          tabName={appState.fileName}
+        />
         <Preview content={doc} preferences={config} />
       </Container>
       <Footer

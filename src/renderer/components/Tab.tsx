@@ -11,13 +11,12 @@ const Tab = styled.div`
   }
 `;
 
-export const TabItem = ({ title }) => {
-  const [isActive, setIsActive] = useState(false);
+export const TabItem = ({ title, active }) => {
+  const [isActive, setIsActive] = useState(active);
 
   const handleClick = (e: React.ChangeEvent<any>) => {
     e.preventDefault();
     setIsActive(!isActive);
-    console.log(isActive);
   };
 
   return (
