@@ -3,9 +3,14 @@
 ![Doomsday](./assets/portrait.jpg)
 <h6 align="center">The Doomsday markdown editor.<h6/>
 
-## Todo:
+## About:
 
-###### Features
+This editor is for educational purposes, we do not plan to add features continuously but it is open to anyone who wants to contribute to **the doomsday editor**.
+
+---
+## Todo list.
+
+#### Features.
 
 - [ ] export to pdf and html.
 - [ ] Real Files on Filetree view.
@@ -16,7 +21,7 @@
 - [x] Add a footer with file information. (_on proccess_)
 - [x] Add a tabbar.
 
-###### Fix
+#### Fix
 
 - [x] Editor initial width.
 - [ ] Change the colorscheme.
