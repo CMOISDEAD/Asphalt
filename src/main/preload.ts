@@ -19,6 +19,7 @@ contextBridge.exposeInMainWorld('electron', {
     },
     closeApp: () => ipcRenderer.send('close-app'),
     saveFile: (data) => ipcRenderer.send('save-file', data),
+    handleMdToPdf: (path: string) => ipcRenderer.send('md-pdf', path),
     openFile: () => ipcRenderer.invoke('dialog:openFile'),
   },
 });

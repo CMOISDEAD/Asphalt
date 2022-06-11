@@ -28,7 +28,7 @@ const Nav = styled.div`
 `;
 
 export const Navbar = ({ callback }: fileProps) => {
-  const [title, setTitle] = useState('Asphalt');
+  const [title, setTitle] = useState('Operation: Doomsday editor');
 
   const handleClose = () => {
     window.electron.ipcRenderer.closeApp();

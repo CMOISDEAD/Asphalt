@@ -23,6 +23,7 @@ import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import fs from 'fs';
+import markdownpdf from 'markdown-pdf';
 
 export default class AppUpdater {
   constructor() {
@@ -46,7 +47,12 @@ async function handleFileOpen() {
     fs.readFile(filePaths[0], { encoding: 'utf-8' }, function (err, data) {
       if (err) console.log(err);
     });
-    return { path: filePaths[0], fileName: path.basename(filePaths[0]), data, extention: path.extname(filePaths[0]) };
+    return {
+      path: filePaths[0],
+      fileName: path.basename(filePaths[0]),
+      data,
+      extention: path.extname(filePaths[0]),
+    };
   }
 }
 
@@ -58,6 +64,18 @@ function handleWriteFile(data) {
     }
   });
   console.log('file saved.');
+}
+
+function handleMdToPdf(filePath: string) {
+  let name = path.basename(filePath, '.md');
+
+  fs.createReadStream(filePath)
+    .pipe(markdownpdf())
+    .pipe(
+      fs.createWriteStream(
+        `/home/camilo/Documents/git/asphalt/docs/${name}.pdf`
+      )
+    );
 }
 
 ipcMain.on('ipc-example', async (event, arg) => {
@@ -74,6 +92,10 @@ ipcMain.on('close-app', () => {
 
 ipcMain.on('save-file', (event, data) => {
   handleWriteFile(data);
+});
+
+ipcMain.on('md-pdf', (event, filePath) => {
+  handleMdToPdf(filePath);
 });
 
 if (process.env.NODE_ENV === 'production') {

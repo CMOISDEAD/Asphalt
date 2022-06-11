@@ -4,6 +4,7 @@ import {
   VscSearch,
   VscSave,
   VscOpenPreview,
+  VscFilePdf,
 } from 'react-icons/vsc';
 import { useState } from 'react';
 
@@ -35,8 +36,25 @@ export const Sidebar = ({
   fileContent,
   setPreview,
   setFileView,
+  store,
 }: fileProps) => {
   const [flag, setFlag] = useState(false);
+
+  const sendNotification = (title: string, message: string, type: string) => {
+    store.addNotification({
+      title,
+      message,
+      type,
+      insert: 'top',
+      container: 'bottom-right',
+      animationIn: ['animate__animated', 'animate__fadeIn'],
+      animationOut: ['animate__animated', 'animate__fadeOut'],
+      dismiss: {
+        duration: 2000,
+        onScreen: true,
+      },
+    });
+  };
 
   const handleFile = async (e: React.ChangeEvent<any>) => {
     e.preventDefault;
@@ -46,13 +64,24 @@ export const Sidebar = ({
 
   const handleSave = (e: React.ChangeEvent<any>) => {
     e.preventDefault;
-    window.electron.ipcRenderer.saveFile(fileContent);
+    if (fileContent) {
+      window.electron.ipcRenderer.saveFile(fileContent);
+      sendNotification('File saved!', 'File Saved succesfully.', 'success');
+    }
   };
 
   const handlePreview = (e: React.ChangeEventHandler<any>) => {
     e.preventDefault;
     setPreview({ show: flag ? 'none' : 'block' });
     setFlag(flag ? false : true);
+  };
+
+  const handlePrint = (e: React.ChangeEvent<any>) => {
+    e.preventDefault;
+    if (fileContent.path) {
+      window.electron.ipcRenderer.handleMdToPdf(fileContent.path);
+      sendNotification('Pdf created!', 'Pdf created succesfully.', 'success');
+    }
   };
 
   const handlePreviewFileTree = (e: React.ChangeEventHandler<any>) => {
@@ -75,6 +104,9 @@ export const Sidebar = ({
         </li>
         <li>
           <VscOpenPreview onClick={handlePreview} />
+        </li>
+        <li>
+          <VscFilePdf onClick={handlePrint} />
         </li>
       </ul>
     </Container>

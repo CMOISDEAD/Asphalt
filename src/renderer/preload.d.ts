@@ -12,6 +12,7 @@ declare global {
         once(channel: string, func: (...args: unknown[]) => void): void;
         closeApp(): void;
         saveFile(data): void;
+        saveFile(path: string): void;
         openFile(): string;
       };
     };

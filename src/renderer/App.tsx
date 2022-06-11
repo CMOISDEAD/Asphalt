@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import styled from 'styled-components';
+import { ReactNotifications, Store } from 'react-notifications-component';
 import './App.css';
+import 'react-notifications-component/dist/theme.css';
 
 // Components
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
 import { FileTree } from './components/FileTree';
-//import { CodeMirror } from './components/CodeMirror';
 import { Monaco } from './components/Monaco';
 import { Preview } from './components/Preview';
 import { Footer } from './components/Footer';
@@ -35,6 +36,7 @@ const Hello = () => {
 
   return (
     <div>
+      <ReactNotifications />
       <Navbar callback={setAppState} />
       <Container>
         <Sidebar
@@ -42,6 +44,7 @@ const Hello = () => {
           fileContent={{ path: appState.path, value: doc }}
           setPreview={setConfig}
           setFileView={setFileTree}
+          store={Store}
         />
         <FileTree data={fileTree} />
         <Monaco
