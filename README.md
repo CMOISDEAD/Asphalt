@@ -1,7 +1,7 @@
 ## Todo:
 
 ###### Features
-
+- [ ] export to pdf and html.
 - [ ] Real Files on Filetree view.
 - [x] Save files on local. (_Need to be fixed?_)
 - [x] Hot reload on Preview section.
